@@ -4,7 +4,12 @@ import { Row, Col, message, Typography, Button } from 'antd'
 import { Terms, env } from './types'
 import { ITab, NoActiveTabError } from '../../models'
 import APIClient from './APIClient'
-import { getBodyInnerText, getSelectedText } from '../../worker/worker'
+import {
+    getBodyInnerText,
+    getSelectedText,
+    highlightTerms,
+    getActiveTabID,
+} from '../../worker/worker'
 
 const client = new APIClient({ env: process.env.env as env })
 
@@ -45,7 +50,13 @@ const App = () => {
                     })
                 }
             )
-            setTerms(json.terms)
+            console.log('finally...')
+
+            console.log('json', json)
+
+            const tabID = await getActiveTabID()
+            await highlightTerms(tabID, json.terms)
+
             messageApi.open({
                 type: 'success',
                 content: 'Check complete',
@@ -53,10 +64,6 @@ const App = () => {
             setIsChecking(false)
         }
     }
-
-    useEffect(() => {
-        console.log('terms', terms)
-    }, [terms])
 
     const getTab = async (): Promise<ITab> => {
         let [tab] = await chrome.tabs.query({

@@ -7,3 +7,4 @@ matplotlib
 plotly
 langchain
 nltk
+matplotlib

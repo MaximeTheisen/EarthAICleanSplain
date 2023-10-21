@@ -1,5 +1,5 @@
 import axios, { AxiosInstance } from 'axios'
-import { env, Message } from './types'
+import { env, Terms } from './types'
 import { ITab } from '../../models'
 
 class APIClient {

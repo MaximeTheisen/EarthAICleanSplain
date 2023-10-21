@@ -1,6 +1,21 @@
+/**
+ * class Alternative(BaseModel):
+    original: str
+    alternative: str
+
+
+class Term(BaseModel):
+    citation: str
+    tag: str
+    explanation: str
+    alternative: list[Alternative]
+ */
+
 type Terms = {
-    role: 'user' | 'assistant'
-    content: string
+    citation: string
+    tag: string
+    explanation: string
+    alternative: { original: string; alternative: string }[]
 }
 
 type env = 'development' | 'production' | 'test'

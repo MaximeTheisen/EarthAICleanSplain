@@ -3,6 +3,8 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
+from .prompts import run_conversation
+
 import modal
 
 web_app = FastAPI()
@@ -19,21 +21,11 @@ web_app.add_middleware(
     allow_headers=["*"],
 )
 
-stub = modal.Stub("controlk-api")
-
-image = modal.Image.debian_slim().pip_install_from_requirements("requirements.txt")
-
-
-class Alternative(BaseModel):
-    original: str
-    alternative: str
-
 
 class Term(BaseModel):
     citation: str
     tag: str
     explanation: str
-    alternative: list[Alternative]
 
 
 class ProofreadRequest(BaseModel):
@@ -46,24 +38,21 @@ class ProofreadResponse(BaseModel):
 
 @web_app.post("/proofread")
 async def proofread(req: ProofreadRequest) -> ProofreadResponse:
+    response = run_conversation(req.text)
+
+    print(response)
+
     return ProofreadResponse(
         terms=[
             Term(
                 citation="commitment to responsible and environmentally-friendly design",
                 tag="orange",
                 explanation="Generic environmental claims are prohibited when they are not based on recognized excellent environmental performance relevant to the claim.",
-                alternative=[
-                    Alternative(
-                        original="commitment to responsible and environmentally-friendly design",
-                        alternative="commitment to responsible design",
-                    )
-                ],
             )
         ]
     )
 
 
-@stub.function(image=image, secret=modal.Secret.from_name("openai"), keep_warm=1, cpu=2)
 @modal.asgi_app()
 def fastapi_app():
     return web_app
