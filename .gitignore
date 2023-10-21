@@ -1,0 +1,9 @@
+app/.env
+extension/.env
+extension/node_modules
+extension/dist/
+**/__pycache__/
+api/.DS_Store
+
+# Ignore dist files
+extension/dist/*

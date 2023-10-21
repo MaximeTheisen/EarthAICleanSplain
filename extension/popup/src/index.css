@@ -1,0 +1,7 @@
+:where(.css-dev-only-do-not-override-htwhyh).ant-card .ant-card-body {
+    padding: 5;
+}
+
+:where(.css-htwhyh).ant-card .ant-card-body {
+    padding: 7;
+}

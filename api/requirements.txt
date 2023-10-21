@@ -1,0 +1,9 @@
+tiktoken
+pandas
+fastapi
+openai
+modal-client
+matplotlib
+plotly
+langchain
+nltk
