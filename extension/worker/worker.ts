@@ -1,10 +1,10 @@
-// open explanation page on install
-chrome.runtime.onInstalled.addListener(function listener(details) {
-    if (details.reason === chrome.runtime.OnInstalledReason.INSTALL) {
-        chrome.tabs.create({ url: 'https://empathy-know-550140.framer.app/' })
-        chrome.runtime.onInstalled.removeListener(listener)
-    }
-})
+// // open explanation page on install
+// chrome.runtime.onInstalled.addListener(function listener(details) {
+//     if (details.reason === chrome.runtime.OnInstalledReason.INSTALL) {
+//         chrome.tabs.create({ url: 'https://empathy-know-550140.framer.app/' })
+//         chrome.runtime.onInstalled.removeListener(listener)
+//     }
+// })
 
 // Retrieves the selected text on the current tab
 export async function getSelectedText(tabId: number) {
