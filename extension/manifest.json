@@ -1,6 +1,6 @@
 {
-    "name": "claros",
-    "description": "Search for anything on a website!",
+    "name": "CleanSplain",
+    "description": "Find greenwashing in press releases.",
     "version": "0.0.2",
     "manifest_version": 3,
     "icons": {

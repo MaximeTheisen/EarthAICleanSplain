@@ -1,16 +1,12 @@
 import { useState, useEffect, useRef } from 'react'
-import { Row, Col, message, Typography } from 'antd'
+import { Row, Col, message, Typography, Button } from 'antd'
 
-import SendBox from './components/SendBox'
 import { Message, env } from './types'
 import { ITab, NoActiveTabError } from '../../models'
 import APIClient from './APIClient'
 import { getBodyInnerText, getSelectedText } from '../../worker/worker'
-import Messages from './components/Messages'
 
 const client = new APIClient({ env: process.env.env as env })
-
-const { Text } = Typography
 
 const App = () => {
     const [messages, setMessages] = useState<Message[]>([])
@@ -98,37 +94,9 @@ const App = () => {
             {contextHolder}
             <Row justify={'center'}>
                 <Col>
-                    <Text>
-                        <a
-                            href="https://forms.gle/Y155rLsTGDq3CYxu5"
-                            target="_blank"
-                            rel="noreferrer"
-                        >
-                            Send Feedback
-                        </a>
-                    </Text>
-                </Col>
-            </Row>
-            <Row
-                style={{
-                    marginBottom: '10px',
-                    height: '450px',
-                    overflowY: 'auto',
-                }}
-                ref={listRef}
-            >
-                <Col span={24}>
-                    <Messages messages={messages} />
-                </Col>
-            </Row>
-            <Row
-                style={{
-                    position: 'sticky',
-                    bottom: '10px',
-                }}
-            >
-                <Col span={24}>
-                    <SendBox sendMessage={sendMessage} />
+                    <Button onClick={() => alert('all done!')}>
+                        Check for Greenwashing
+                    </Button>
                 </Col>
             </Row>
         </div>

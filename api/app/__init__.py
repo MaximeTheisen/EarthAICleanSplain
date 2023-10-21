@@ -1,6 +1,7 @@
 # modal based api to call gpt-3
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
 
 import modal
 
@@ -23,9 +24,43 @@ stub = modal.Stub("controlk-api")
 image = modal.Image.debian_slim().pip_install_from_requirements("requirements.txt")
 
 
+class Alternative(BaseModel):
+    original: str
+    alternative: str
+
+
+class Term(BaseModel):
+    citation: str
+    tag: list[str]
+    explanation: str
+    alternative: list[Alternative]
+
+
+class ProofreadRequest(BaseModel):
+    text: str
+
+
+class ProofreadResponse(BaseModel):
+    terms: list[Term]
+
+
 @web_app.get("/proofread")
-async def root():
-    return {"message": "Hello World"}
+async def proofread(req: ProofreadRequest) -> ProofreadResponse:
+    return ProofreadResponse(
+        terms=[
+            Term(
+                citation="https://www.google.com",
+                tag=["forbidden_word"],
+                explanation="This is a forbidden word",
+                alternative=[
+                    Alternative(
+                        original="lalalala",
+                        alternative="lalalalalla",
+                    )
+                ],
+            )
+        ]
+    )
 
 
 @stub.function(image=image, secret=modal.Secret.from_name("openai"), keep_warm=1, cpu=2)
