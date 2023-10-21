@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { Row, Col, message, Typography, Button } from 'antd'
 
-import { Message, env } from './types'
+import { Terms, env } from './types'
 import { ITab, NoActiveTabError } from '../../models'
 import APIClient from './APIClient'
 import { getBodyInnerText, getSelectedText } from '../../worker/worker'
@@ -9,17 +9,15 @@ import { getBodyInnerText, getSelectedText } from '../../worker/worker'
 const client = new APIClient({ env: process.env.env as env })
 
 const App = () => {
-    const [messages, setMessages] = useState<Message[]>([])
+    const [terms, setTerms] = useState<Terms[]>([])
     const [currTab, setCurrTab] = useState<ITab | null>(null)
-    const listRef = useRef<HTMLDivElement>(null)
     const [messageApi, contextHolder] = message.useMessage()
 
-    const sendMessage = async (message: string) => {
-        const newMessage: Message = { role: 'user', content: message }
-        const newHistory: Message[] = [...messages, newMessage]
+    const [isChecking, setIsChecking] = useState(false)
 
-        setMessages(newHistory)
-
+    const checkText = async () => {
+        console.log('checking text')
+        setIsChecking(true)
         let tab: ITab = {
             bodyInnerText: '',
             url: '',
@@ -36,20 +34,9 @@ const App = () => {
             }
         } finally {
             // send completion request to API
-            await client.complete(
+            const json = await client.proofread(
                 {
-                    prompt: newMessage,
-                    history: messages,
-                    tab,
-                },
-                (tempResult) => {
-                    setMessages([
-                        ...newHistory,
-                        {
-                            role: 'assistant',
-                            content: tempResult,
-                        },
-                    ])
+                    text: tab.bodyInnerText,
                 },
                 (error) => {
                     messageApi.open({
@@ -58,14 +45,18 @@ const App = () => {
                     })
                 }
             )
+            setTerms(json.terms)
+            messageApi.open({
+                type: 'success',
+                content: 'Check complete',
+            })
+            setIsChecking(false)
         }
     }
 
     useEffect(() => {
-        if (listRef.current) {
-            listRef.current.scrollTop = listRef.current.scrollHeight
-        }
-    }, [messages])
+        console.log('terms', terms)
+    }, [terms])
 
     const getTab = async (): Promise<ITab> => {
         let [tab] = await chrome.tabs.query({
@@ -90,11 +81,11 @@ const App = () => {
     }
 
     return (
-        <div style={{ height: '500px', width: '300px' }}>
+        <div>
             {contextHolder}
             <Row justify={'center'}>
                 <Col>
-                    <Button onClick={() => alert('all done!')}>
+                    <Button loading={isChecking} onClick={checkText}>
                         Check for Greenwashing
                     </Button>
                 </Col>

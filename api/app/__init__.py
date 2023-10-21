@@ -31,7 +31,7 @@ class Alternative(BaseModel):
 
 class Term(BaseModel):
     citation: str
-    tag: list[str]
+    tag: str
     explanation: str
     alternative: list[Alternative]
 
@@ -44,18 +44,18 @@ class ProofreadResponse(BaseModel):
     terms: list[Term]
 
 
-@web_app.get("/proofread")
+@web_app.post("/proofread")
 async def proofread(req: ProofreadRequest) -> ProofreadResponse:
     return ProofreadResponse(
         terms=[
             Term(
-                citation="https://www.google.com",
-                tag=["forbidden_word"],
-                explanation="This is a forbidden word",
+                citation="commitment to responsible and environmentally-friendly design",
+                tag="orange",
+                explanation="Generic environmental claims are prohibited when they are not based on recognized excellent environmental performance relevant to the claim.",
                 alternative=[
                     Alternative(
-                        original="lalalala",
-                        alternative="lalalalalla",
+                        original="commitment to responsible and environmentally-friendly design",
+                        alternative="commitment to responsible design",
                     )
                 ],
             )

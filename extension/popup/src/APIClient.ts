@@ -7,8 +7,8 @@ class APIClient {
     baseUrl: string
     axios: AxiosInstance
 
-    devBaseUrl = 'http://localhost:8000/v1'
-    prodBaseUrl = 'https://chromeai--controlk-api-fastapi-app.modal.run/v1'
+    devBaseUrl = 'http://localhost:8000'
+    prodBaseUrl = 'lalalala'
 
     constructor({ env }: { env: env }) {
         this.env = env
@@ -19,17 +19,18 @@ class APIClient {
         })
     }
 
-    async complete(
-        data: { prompt: Message; history: Message[]; tab: ITab },
-        onData: (data: any) => void,
+    async proofread(
+        data: { text: string | undefined },
         onError: (error: any) => void
     ) {
+        console.log('making request...')
+
         if (prompt.length > 1000) {
             throw new Error('Prompt is too long')
         }
 
         try {
-            const res = await fetch(`${this.baseUrl}/chat`, {
+            const res = await fetch(`${this.baseUrl}/proofread`, {
                 method: 'POST',
                 mode: 'cors',
                 headers: {
@@ -47,18 +48,7 @@ class APIClient {
                 throw new Error('No body')
             }
 
-            const reader = res.body
-                .pipeThrough(new TextDecoderStream())
-                .getReader()
-
-            let result = ''
-            while (true) {
-                const { value, done } = await reader.read()
-                if (done) break
-
-                result += value
-                onData(result)
-            }
+            return await res.json()
         } catch (error) {
             onError(error)
         }
